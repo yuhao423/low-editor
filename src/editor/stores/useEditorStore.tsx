@@ -5,7 +5,7 @@ export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other';
 export interface Component {
   id: string;
   name: string;
-  type: ComponentType;
+  type?: ComponentType;
   props: Record<string, any> | any;
   children?: Component[];
   parentId?: string;

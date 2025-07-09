@@ -6,8 +6,7 @@ export const Material = () => {
             <PageTabs />
             <div className="flex-1 overflow-auto">
                 <PageTree></PageTree>
-                {/* <ComponentTree /> */}
-                {/* 后续可在此追加物料面板 MaterialPanel */}
+                
             </div>
         </div>
     );
