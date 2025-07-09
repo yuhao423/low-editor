@@ -9,6 +9,7 @@ const Container = ({ id, children }: CommonComponentProps) => {
 
     return (
         <div
+            data-component-id={id}
             ref={drop}
             className='border-[1px] border-[#000] min-h-[100px] p-[20px]'
         >{children}</div>

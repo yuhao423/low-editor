@@ -69,7 +69,7 @@ export function EditArea() {
 
   return (
     <div
-      className="h-full w-full overflow-hidden relative bg-[editor-bg] cursor-grabbing"
+      className="h-full w-full overflow-hidden relative cursor-grabbing bg-[var(--editor-bg)]"
       onMouseDown={onMouseDown}
     >
       {/* 整体缩放区域 */}

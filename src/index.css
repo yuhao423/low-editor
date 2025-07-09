@@ -76,6 +76,10 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   --editor-bg:#d0e3ff;
+  --primary-main:#8769ff;
+  --hover-bg:#8769ff;
+  --primary-slow:#edeefd;
+  --hover-index:12;
 }
 
 .dark {
