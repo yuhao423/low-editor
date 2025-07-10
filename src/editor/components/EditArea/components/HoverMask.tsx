@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
-
+import {useCanvasStore} from '@/editor/stores/useCanvasStore'
 export interface HoverMaskProps {
     /** 画布区的根元素的 id */
     containerId: string
@@ -10,8 +10,15 @@ export interface HoverMaskProps {
     portalWrapperClassId: string
 }
 
+/**
+ * 
+ * TODO: 
+ *  添加 resize 和 scroll 监听防抖更新（防止错位）
+ *  加上 useLayoutEffect 比 useEffect 更合适（防止初始闪烁
+ */
 function HoverMask({ containerId, componentId }: HoverMaskProps) {
 
+    const { scale } = useCanvasStore();
     const [position, setPosition] = useState({
         left: 0,
         top: 0,
@@ -36,10 +43,10 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
         const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
 
         setPosition({
-            top: top - containerTop + container.scrollTop,
-            left: left - containerLeft + container.scrollTop,
-            width,
-            height
+            top: (top - containerTop + container.scrollTop) / scale,
+            left: (left - containerLeft + container.scrollTop) / scale,
+            width: width / scale,
+            height: height / scale
         });
     }
 
