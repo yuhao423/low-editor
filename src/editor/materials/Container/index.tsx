@@ -3,10 +3,10 @@ import type { CommonComponentProps } from '@/editor/interface';
 import { useMaterialDrop } from '@/editor/hooks/useMaterialDrop';
 
 
+
 const Container = ({ id, children }: CommonComponentProps) => {
 
-    const {drop,canDrop} = useMaterialDrop(['Button','Container'],id)
-
+    const { drop } = useMaterialDrop(['Button', 'Container'], id)
     return (
         <div
             data-component-id={id}

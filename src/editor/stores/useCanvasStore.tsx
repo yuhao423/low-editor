@@ -22,7 +22,7 @@ const MAX_SCALE = 2.0;
 const SCALE_STEP = 0.1;
 
 export const useCanvasStore = create<CanvasState>((set, get) => ({
-  position: { x: 0, y: 0 },
+  position: { x: 400, y: 200 },
   size: { width: 375, height: 812 },
   scale: 1,
 

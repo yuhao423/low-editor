@@ -1,9 +1,9 @@
-import React, { useRef, useState, type MouseEventHandler } from "react";
+import React, { useState, type MouseEventHandler } from "react";
 import { useCanvasStore } from "@/editor/stores/useCanvasStore";
 import HoverMask from "./HoverMask";
 
 export function CanvasBox({ children }: { children?: React.ReactNode }) {
-  const { position, size, scale } = useCanvasStore();
+  const { position, size } = useCanvasStore();
 
   const [hoverComponentId, setHoverComponentId] = useState<string>()
 

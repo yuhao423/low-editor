@@ -21,6 +21,7 @@ export default tseslint.config([
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'off', // ✅ 关闭这条规则
+      'react-hooks/exhaustive-deps': 'off',
     },
   },
 ])

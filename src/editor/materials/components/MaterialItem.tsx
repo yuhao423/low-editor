@@ -9,13 +9,13 @@ export function MaterialItem(props: MaterialItemProps) {
         name
     } = props;
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const [_, drag] = useDrag({
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, drag] = useDrag({
         type: name,
         item: {
             type: name
         }
     });
 
-    return  <li  ref={drag} className="p-2 bg-white rounded shadow  hover:bg-[#ccc] cursor-move">{name}</li>
+    return <li ref={drag as unknown as React.Ref<HTMLLIElement>} className="p-2 bg-white rounded shadow  hover:bg-[#ccc] cursor-move">{name}</li>
 }

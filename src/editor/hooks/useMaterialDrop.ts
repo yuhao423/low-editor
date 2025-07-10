@@ -30,5 +30,5 @@ export function useMaterialDrop(accept: string[], id: string) {
         }),
     }));
 
-    return { canDrop, drop }
+    return { canDrop,  drop:drop as any }
 }
