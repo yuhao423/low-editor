@@ -4,12 +4,13 @@ import Button from '@/editor/materials/Button';
 import Page from '@/editor/materials/Page';
 
 export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other';
- 
+
 export interface ComponentConfig {
     name: string;
     defaultProps: Record<string, any>,
     component: any,
-    type?: ComponentType;
+    type: ComponentType;
+    desc: string
 }
 
 interface State {
@@ -26,7 +27,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             name: 'Container',
             defaultProps: {},
             component: Container,
-            type:'Layout'
+            type: 'Layout',
+            desc: '容器组件'
         },
         Button: {
             name: 'Button',
@@ -34,14 +36,16 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
                 variant: 'default',
                 text: '按钮'
             },
-            type:'Form',
+            type: 'Form',
+            desc: '按钮组件',
             component: Button
         },
         Page: {
             name: 'Page',
             defaultProps: {},
             component: Page,
-            type:'Display'
+            type: 'Display',
+            desc: '根组件'
         }
     },
     registerComponent: (name, componentConfig) => set((state) => {

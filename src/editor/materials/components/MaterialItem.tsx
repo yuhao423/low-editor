@@ -1,12 +1,14 @@
 import { useDrag } from "react-dnd";
 export interface MaterialItemProps {
     name: string
+    desc: string
 }
 
 export function MaterialItem(props: MaterialItemProps) {
 
     const {
-        name
+        name,
+        desc
     } = props;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,5 +19,5 @@ export function MaterialItem(props: MaterialItemProps) {
         }
     });
 
-    return <li ref={drag as unknown as React.Ref<HTMLLIElement>} className="p-2 bg-white rounded shadow  hover:bg-[#ccc] cursor-move">{name}</li>
+    return <li ref={drag as unknown as React.Ref<HTMLLIElement>} className="p-2 bg-white rounded shadow  hover:bg-[#ccc] cursor-move">{desc}</li>
 }

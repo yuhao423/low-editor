@@ -44,7 +44,7 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
         if (debounceTimer.current) clearTimeout(debounceTimer.current);
         debounceTimer.current = setTimeout(() => {
             requestAnimationFrame(updatePosition);
-        }, 30);
+        }, 0);
     };
 
     // 初始 + 组件变化后

@@ -1,6 +1,6 @@
 import { useDrop } from "react-dnd";
 import { useEditorStore } from "@/editor/stores/useEditorStore";
-import { useComponentConfigStore } from "@/editor/stores/componentsConfig"
+import { useComponentConfigStore, type ComponentConfig } from "@/editor/stores/componentsConfig"
 import { toast } from "sonner";
 
 export function useMaterialDrop(accept: string[], id: string) {
@@ -9,7 +9,7 @@ export function useMaterialDrop(accept: string[], id: string) {
 
     const [{ canDrop }, drop] = useDrop(() => ({
         accept,
-        drop: (item: { type: string}, monitor) => {
+        drop: (item: ComponentConfig, monitor) => {
             const didDrop = monitor.didDrop()
             if (didDrop) {
               return;
@@ -21,6 +21,7 @@ export function useMaterialDrop(accept: string[], id: string) {
                 id: `page-${Date.now()}`,
                 name: item.type,
                 props,
+                desc:item.desc,
             }, id)
 
             toast(item.type)

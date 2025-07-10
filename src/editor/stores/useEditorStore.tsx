@@ -9,7 +9,7 @@ export interface Component {
   props: Record<string, any> | any;
   children?: Component[];
   parentId?: string;
-  desc?: string;
+  desc: string;
 }
 
 export interface Page {
@@ -131,7 +131,7 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
       if (page.id !== currentPageId) return page;
 
       const root = [...page.components];
-      const newTree = removeComponentById(id, root);
+      const newTree = removeComponentById(id!, root);
       return { ...page, components: newTree };
     });
 
@@ -156,7 +156,7 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
   setCurComponentId: (componentId) => {
     const page = get().pages.find(p => p.id === get().currentPageId);
     const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null;
-    
+
     set({
       currentComponentId: componentId,
       currentComponent: targetComponent,
