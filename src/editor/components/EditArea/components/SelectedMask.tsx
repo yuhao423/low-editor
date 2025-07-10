@@ -1,28 +1,18 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import { useEditorStore, getComponentById } from '@/editor/stores/useEditorStore';
+import { useCanvasStore } from '@/editor/stores/useCanvasStore';
+import { useEditorStore } from '@/editor/stores/useEditorStore';
+
 export interface HoverMaskProps {
-    /** 画布区的根元素的 id */
-    containerId: string
-    /** 组件ID */
+    containerId: string;
     componentId: string;
-    /** 给 CanvasBox 加一个wrapper，将hover的div加入wrapper中 */
-    portalWrapperClassId: string
+    portalWrapperClassId: string;
 }
 
-/**
- * 
- * TODO: 
- *  添加 resize 和 scroll 监听防抖更新（防止错位）
- *  加上 useLayoutEffect 比 useEffect 更合适（防止初始闪烁
- */
 function SelectedMask({ containerId, componentId }: HoverMaskProps) {
-
-    // const currentPage = useEditorStore((state) => state.currentPage)
-    const { currentPageId, pages, currentComponent } = useEditorStore()
-    console.log(currentComponent,'caozong');
     const { scale } = useCanvasStore();
+    const { currentComponent } = useEditorStore();
+
     const [position, setPosition] = useState({
         left: 0,
         top: 0,
@@ -30,24 +20,14 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
         height: 0
     });
 
-    useEffect(() => {
-        updatePosition();
-    }, [componentId]);
+    const observerRef = useRef<MutationObserver | null>(null);
+    const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        // console.log(curSelectedComponent, currentComponent, 'currentPage');
-
-        updatePosition()
-    }, [currentComponent])
-
-    function updatePosition() {
-        if (!componentId) return;
-
+    const updatePosition = () => {
         const container = document.getElementById(containerId);
-        if (!container) return;
-
         const node = document.querySelector(`[data-component-id="${componentId}"]`);
-        if (!node) return;
+
+        if (!container || !node) return;
 
         const { top, left, width, height } = node.getBoundingClientRect();
         const { top: containerTop, left: containerLeft } = container.getBoundingClientRect();
@@ -58,11 +38,50 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
             width: width / scale,
             height: height / scale
         });
-    }
+    };
+
+    const debounceUpdate = () => {
+        if (debounceTimer.current) clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(() => {
+            requestAnimationFrame(updatePosition);
+        }, 30);
+    };
+
+    // 初始 + 组件变化后
+    useLayoutEffect(() => {
+        debounceUpdate();
+    }, [componentId, currentComponent?.children?.length]);
+
+    // 监听 DOM 结构变化
+    useLayoutEffect(() => {
+        const target = document.querySelector(`[data-component-id="${componentId}"]`);
+        if (!target) return;
+
+        observerRef.current?.disconnect();
+        observerRef.current = new MutationObserver(debounceUpdate);
+        observerRef.current.observe(target, { childList: true, subtree: true });
+
+        return () => {
+            observerRef.current?.disconnect();
+        };
+    }, [componentId]);
+
+    // 监听 window resize 和容器滚动
+    useLayoutEffect(() => {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        window.addEventListener('resize', debounceUpdate);
+        container.addEventListener('scroll', debounceUpdate);
+
+        return () => {
+            window.removeEventListener('resize', debounceUpdate);
+            container.removeEventListener('scroll', debounceUpdate);
+        };
+    }, [containerId]);
 
     const el = useMemo(() => {
-        return document.getElementById('portal-wrapper')
-
+        return document.getElementById('portal-wrapper');
     }, []);
 
     return createPortal((
