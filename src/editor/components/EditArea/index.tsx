@@ -3,6 +3,7 @@ import { CanvasBox } from "./components/Canvas";
 import { useCanvasStore } from "@/editor/stores/useCanvasStore";
 import { useComponentConfigStore } from "@/editor/stores/componentsConfig";
 import { useEditorStore, type Component } from "@/editor/stores/useEditorStore";
+import { RightClickContextMenu } from "./components/RightClickContextMenu";
 
 export function EditArea() {
   const { pages, currentPageId } = useEditorStore();
@@ -50,22 +51,56 @@ export function EditArea() {
     };
   }, []);
 
-  const renderComponents = (components: Component[]): React.ReactNode => {
-    return components.map((component) => {
-      const config = componentConfig?.[component.name];
-      if (!config?.component) return null;
-      return React.createElement(
-        config.component,
-        {
-          key: component.id,
-          id: component.id,
-          ...config.defaultProps,
-          ...component.props,
-        },
-        renderComponents(component.children || [])
-      );
-    });
-  };
+  // const renderComponents = (components: Component[]): React.ReactNode => {
+  //   return components.map((component) => {
+  //     const config = componentConfig?.[component.name];
+  //     if (!config?.component) return null;
+  //     return React.createElement(
+  //       config.component,
+  //       {
+  //         key: component.id,
+  //         id: component.id,
+  //         ...config.defaultProps,
+  //         ...component.props,
+  //       },
+  //       renderComponents(component.children || [])
+  //     );
+  //   });
+  // };
+
+ const renderComponents = (components: Component[]): React.ReactNode => {
+  return components.map((component) => {
+    const config = componentConfig?.[component.name];
+    if (!config?.component) return null;
+
+    const children = renderComponents(component.children || []);
+
+    // 渲染原始组件
+    const element = React.createElement(
+      config.component,
+      {
+        id: component.id,
+        ...config.defaultProps,
+        ...component.props,
+      },
+      children
+    );
+
+    // 用一层 div 包装它，并放到 RightClickContextMenu 里
+    return (
+      <RightClickContextMenu key={component.id} componentId={component.id}>
+        <div
+          className="w-full h-full"
+          
+        >
+          {element}
+        </div>
+      </RightClickContextMenu>
+    );
+  });
+};
+
+
 
   return (
     <div

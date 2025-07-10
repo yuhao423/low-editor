@@ -7,7 +7,7 @@ function App() {
   return (
     <div className="bg-[#ebebeb] w-screen h-screen overflow-hidden p-4 box-border">
       <Toaster richColors position='top-center' />
-       <LowCodeEditor />
+      <LowCodeEditor />
     </div>
   )
 }

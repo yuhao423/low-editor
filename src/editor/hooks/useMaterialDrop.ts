@@ -20,7 +20,7 @@ export function useMaterialDrop(accept: string[], id: string) {
             addComponent({
                 id: `page-${Date.now()}`,
                 name: item.type,
-                props
+                props,
             }, id)
 
             toast(item.type)

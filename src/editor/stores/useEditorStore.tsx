@@ -21,8 +21,16 @@ export interface Page {
 interface State {
   pages: Page[];
   currentPageId: string;
+  currentPage: Page | null;
+  currentComponentId: string | null;
+  /** 是点击的那一个组件 */
+  currentComponent: Component | null;
+  currentHoverComponentId: string | null | undefined;
+  currentHoverComponent: Component | null;
 }
 
+
+/** 点击了一定高亮组件 但是高亮了不一定是点击选中的组件 */
 interface Actions {
   setCurrentPage: (id: string) => void;
   addPage: (name?: string) => void;
@@ -30,6 +38,8 @@ interface Actions {
   addComponent: (component: Component, parentId?: string) => void;
   delComponent: (id: string) => void;
   updateComponent: (id: string, props: Record<string, any>) => void;
+  setCurComponentId: (componentId: string | null) => void
+  setCurHoverComponentId: (componentId: string | null) => void
 }
 
 export const useEditorStore = create<State & Actions>((set, get) => ({
@@ -49,9 +59,15 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
     },
   ],
   currentPageId: 'page-1',
-
+  currentComponentId: null,
+  currentComponent: null,
+  currentHoverComponentId: null,
+  currentHoverComponent: null,
   setCurrentPage: (id) => set({ currentPageId: id }),
-
+  get currentPage() {
+    const { pages, currentPageId } = get();
+    return pages.find((p) => p.id === currentPageId) || null;
+  },
   addPage: (name = '新页面') => {
     const newId = `page-${Date.now()}`;
     set((state) => ({
@@ -109,7 +125,7 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
     set({ pages: updatedPages });
   },
 
-  delComponent: (id) => {
+  delComponent: (id: string | null) => {
     const { pages, currentPageId } = get();
     const updatedPages = pages.map((page) => {
       if (page.id !== currentPageId) return page;
@@ -136,6 +152,24 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
     });
 
     set({ pages: updatedPages });
+  },
+  setCurComponentId: (componentId) => {
+    const page = get().pages.find(p => p.id === get().currentPageId);
+    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null;
+    
+    set({
+      currentComponentId: componentId,
+      currentComponent: targetComponent,
+    });
+  },
+  setCurHoverComponentId: (componentId) => {
+    const page = get().pages.find(p => p.id === get().currentPageId);
+    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null;
+
+    set({
+      currentHoverComponentId: componentId,
+      currentHoverComponent: targetComponent,
+    });
   },
 }));
 

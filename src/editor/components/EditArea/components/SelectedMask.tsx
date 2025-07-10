@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import { getComponentById, useEditorStore } from '@/editor/stores/useEditorStore'
+import { useEditorStore, getComponentById } from '@/editor/stores/useEditorStore';
 export interface HoverMaskProps {
     /** 画布区的根元素的 id */
     containerId: string
@@ -15,14 +15,13 @@ export interface HoverMaskProps {
  * 
  * TODO: 
  *  添加 resize 和 scroll 监听防抖更新（防止错位）
- *  加上 useLayoutEffect 比 useEffect 更合适（防止初始闪烁）
+ *  加上 useLayoutEffect 比 useEffect 更合适（防止初始闪烁
  */
-function HoverMask({ containerId, componentId }: HoverMaskProps) {
+function SelectedMask({ containerId, componentId }: HoverMaskProps) {
 
-    // const currentPage = useEditorStore((state) => state.currentPage);
-    const {currentPageId,pages} = useEditorStore()
-    const components = pages.find(item=>item.id === currentPageId)?.components
-    const curSelectedComponent =getComponentById(componentId!,components!)
+    // const currentPage = useEditorStore((state) => state.currentPage)
+    const { currentPageId, pages, currentComponent } = useEditorStore()
+    console.log(currentComponent,'caozong');
     const { scale } = useCanvasStore();
     const [position, setPosition] = useState({
         left: 0,
@@ -36,8 +35,10 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
     }, [componentId]);
 
     useEffect(() => {
+        // console.log(curSelectedComponent, currentComponent, 'currentPage');
+
         updatePosition()
-    }, [curSelectedComponent])
+    }, [currentComponent])
 
     function updatePosition() {
         if (!componentId) return;
@@ -58,16 +59,8 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
             height: height / scale
         });
     }
+
     const el = useMemo(() => {
-        // const el = document.createElement('div');
-        // el.className = `wrapper`;
-
-        // const container = document.getElementById(containerId);
-        // console.log(container, 'container');
-
-        // container!.appendChild(el);
-        // return el;
-
         return document.getElementById('portal-wrapper')
 
     }, []);
@@ -89,4 +82,4 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
     ), el!)
 }
 
-export default HoverMask;
+export default SelectedMask;
