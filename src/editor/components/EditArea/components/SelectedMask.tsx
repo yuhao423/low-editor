@@ -50,7 +50,7 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
     // 初始 + 组件变化后
     useLayoutEffect(() => {
         debounceUpdate();
-    }, [componentId, currentComponent?.children?.length]);
+    }, [currentComponent]);
 
     // 监听 DOM 结构变化
     useLayoutEffect(() => {
