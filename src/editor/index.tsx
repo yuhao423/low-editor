@@ -4,7 +4,7 @@ import 'allotment/dist/style.css';
 import { Header } from "./components/Header";
 import { EditArea } from "@/editor/components/EditArea/index";
 import { MaterialComponentsList } from '@/editor/materials/index'
-import { Setting } from "./components/Setting";
+import { Setting } from "@/editor/components/Setting/index";
 import { Material } from "./components/Material/index";
 import { X } from "lucide-react"; // 使用 lucide-react 图标
 

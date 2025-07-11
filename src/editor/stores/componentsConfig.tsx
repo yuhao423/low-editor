@@ -1,16 +1,27 @@
 import { create } from 'zustand';
-import Container from '@/editor/materials/Container';
-import Button from '@/editor/materials/Button';
+import { Container } from '@/editor/materials/Container';
+import { Button, meta } from '@/editor/materials/Button';
 import Page from '@/editor/materials/Page';
 
+/** 组件分类的类型 */
 export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other';
 
+export interface ComponentSetter {
+    /** 字段名 */
+    name: string,
+    /** 表单类型 */
+    renderType: string;
+    /** 前面的文案 */
+    label: string;
+    [key: string]: any
+}
 export interface ComponentConfig {
     name: string;
     defaultProps: Record<string, any>,
     component: any,
     type: ComponentType;
-    desc: string
+    desc: string;
+    setter?: ComponentSetter[]
 }
 
 interface State {
@@ -20,7 +31,6 @@ interface State {
 interface Action {
     registerComponent: (name: string, componentConfig: ComponentConfig) => void
 }
-
 export const useComponentConfigStore = create<State & Action>((set) => ({
     componentConfig: {
         Container: {
@@ -28,16 +38,17 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
             defaultProps: {},
             component: Container,
             type: 'Layout',
-            desc: '容器组件'
+            desc: '容器组件',
         },
         Button: {
             name: 'Button',
             defaultProps: {
-                variant: 'default',
-                text: '按钮'
+                variant: meta.setter.find(item=>item.name === 'variant')?.defaultBtnType,
+                text: meta.setter.find(item=>item.name === 'variant')?.defaultText
             },
             type: 'Form',
             desc: '按钮组件',
+            setter: meta.setter,
             component: Button
         },
         Page: {

@@ -4,7 +4,7 @@ import { useMaterialDrop } from '@/editor/hooks/useMaterialDrop';
 
 
 
-const Container = ({ id, children }: CommonComponentProps) => {
+export const Container = ({ id, children }: CommonComponentProps) => {
 
     const { drop } = useMaterialDrop(['Button', 'Container'], id)
     return (
@@ -15,5 +15,3 @@ const Container = ({ id, children }: CommonComponentProps) => {
         >{children}</div>
     )
 }
-
-export default Container;
