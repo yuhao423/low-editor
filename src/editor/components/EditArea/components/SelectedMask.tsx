@@ -20,7 +20,9 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
         height: 0
     });
 
+    /** 用于监听选中组件的dom字树变化（结构变了就更新位置） */
     const observerRef = useRef<MutationObserver | null>(null);
+    /** 节流处理,避免过于频繁的触发重计算 */
     const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
     const updatePosition = () => {
@@ -58,6 +60,7 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
         if (!target) return;
 
         observerRef.current?.disconnect();
+        /** DOM结构变化监听 */
         observerRef.current = new MutationObserver(debounceUpdate);
         observerRef.current.observe(target, { childList: true, subtree: true });
 

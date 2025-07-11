@@ -1,7 +1,7 @@
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import { getComponentById, useEditorStore } from '@/editor/stores/useEditorStore'
+import { useEditorStore } from '@/editor/stores/useEditorStore'
 export interface HoverMaskProps {
     /** 画布区的根元素的 id */
     containerId: string
@@ -19,10 +19,7 @@ export interface HoverMaskProps {
  */
 function HoverMask({ containerId, componentId }: HoverMaskProps) {
 
-    // const currentPage = useEditorStore((state) => state.currentPage);
-    const {currentPageId,pages} = useEditorStore()
-    const components = pages.find(item=>item.id === currentPageId)?.components
-    const curSelectedComponent =getComponentById(componentId!,components!)
+    const { currentComponent } = useEditorStore()
     const { scale } = useCanvasStore();
     const [position, setPosition] = useState({
         left: 0,
@@ -37,7 +34,7 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
 
     useEffect(() => {
         updatePosition()
-    }, [curSelectedComponent])
+    }, [currentComponent])
 
     function updatePosition() {
         if (!componentId) return;
