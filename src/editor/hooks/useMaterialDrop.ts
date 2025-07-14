@@ -28,8 +28,7 @@ export function useMaterialDrop(accept: string[], id: string) {
             const componentItem = item as ComponentConfig;
             const props = componentConfig[componentItem.type].defaultProps;
 
-            console.log(props,'ysbsbsbb');
-            
+    
             addComponent({
                 id: `page-${Date.now()}`,
                 name: componentItem.type,

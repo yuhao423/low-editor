@@ -15,7 +15,8 @@ export function MaterialItem(props: MaterialItemProps) {
     const [_, drag] = useDrag({
         type: name,
         item: {
-            type: name
+            type: name,
+            desc
         }
     });
 
