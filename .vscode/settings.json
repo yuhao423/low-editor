@@ -1,5 +1,19 @@
 {
     "cSpell.words": [
         "sonner"
-    ]
+    ],
+    // 保存时自动格式化
+    "editor.formatOnSave": true,
+    // 指定 Prettier 为默认 formatter
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // 避免 Tailwind 冲突，可选
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    }
 }
