@@ -1,89 +1,143 @@
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { useForm } from "react-hook-form";
-import { Info } from "lucide-react";
+import { Form } from 'antd';
+import { useEffect, type CSSProperties } from 'react';
+import { type ComponentSetter, useComponentConfigStore } from '@/editor/stores/componentsConfig';
+import { useEditorStore } from '@/editor/stores/useEditorStore';
+import {
+    Select as ASlect,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/ui/select";
+type Option<T = string> = { label: string; value: T };
+import { Input as YuInput } from '@/components/ui/input';
+import { SizeInput, type Dimension } from '@/components/ui/sizeInput';
+import { parseSizeValue, stringifySizeValue } from '@/utils/styleParser';
 
-type PageSettings = {
-    name: string;
-    path: string;
-    rollCodeMode: boolean;
-};
+/** shadcn/ui 只能处理string类型的value 写一个适配器  shadcn/ui 的select组件是不受控组件，而antd的form是受控的 */
+export function ShadcnSelectAdapter<T extends string | number>({ value, onChange, options = [], defaultValue }: {
+    value?: T;
+    onChange?: (value: T) => void;
+    options: Option<T>[];
+    defaultValue?: string;
+}) {
+    return (
+        <ASlect value={value?.toString()} onValueChange={(v) => onChange?.(v as T)} >
+            <SelectTrigger className="w-full">
+                <SelectValue placeholder={defaultValue} />
+            </SelectTrigger>
+            <SelectContent>
+                {options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value.toString()}>
+                        {opt.label}
+                    </SelectItem>
+                ))}
+            </SelectContent>
+        </ASlect>
+    );
+}
 
-export const Styles = () => {
-    const form = useForm<PageSettings>({
-        defaultValues: {
-            name: "大促",
-            path: "index",
-            rollCodeMode: false,
-        },
-    });
+export function Styles() {
 
-    const onSubmit = (values: PageSettings) => {
-        console.log("页面设置", values);
-    };
+    const [form] = Form.useForm();
+
+    const { currentComponentId, currentComponent, updateComponentStyle } = useEditorStore();
+    const { componentConfig } = useComponentConfigStore();
+
+    useEffect(() => {
+        const data = form.getFieldsValue();
+
+        /** style:{width:'100%'} */
+        const style: Record<string, any> = currentComponent?.style || {};
+        const normalizedStyle = { ...style };
+
+        if (typeof style.width === 'string') {
+            normalizedStyle.width = parseSizeValue(style.width);
+        }
+        if (typeof style.height === 'string') {
+            normalizedStyle.height = parseSizeValue(style.height);
+        }
+
+        form.setFieldsValue({
+            ...data,
+            ...normalizedStyle,
+        } as any);
+    }, [currentComponent]);
+
+    if (!currentComponentId || !currentComponent) return null;
+
+    function renderFormElement(setting: ComponentSetter) {
+        const { renderType, options, name } = setting;
+        if (renderType === 'select') {
+            const defaultProps = componentConfig[currentComponent!.name]?.defaultProps;
+            const defaValue = defaultProps?.[name]; // 注意不是写死 variant，要动态取
+            const defaultLabel = options.find((item: { value: any; }) => item.value === defaValue)?.label ?? '请选择';
+
+            return (
+                <ShadcnSelectAdapter
+                    options={options}
+                    defaultValue={defaultLabel}
+                />
+            );
+        } else if (renderType === 'input') {
+            return <YuInput />
+        } else {
+
+            const rawStyleValue: any = currentComponent?.style?.[name as keyof CSSProperties];
+
+
+            console.log(rawStyleValue, 'rawStyleValue');
+            const res = parseSizeValue(rawStyleValue, ['px', '%']);
+            console.log(res, 'res');
+
+            return <SizeInput
+                units={setting.unitOptions}
+                dimension={setting.name as Dimension}
+                /** 这个value 一开始是字符串 传入的，更改了变成对象了，点击了组件又变成字符串 导致返显有问题 */
+                value={res}
+                onChange={(val) => form.setFieldsValue({ [name]: val })}
+            />
+        }
+    }
+
+
+    function valueChange(changeValues: Record<string, any>) {
+        if (!currentComponentId) return;
+
+        const style: Record<string, any> = {};
+        for (const key in changeValues) {
+            const val = changeValues[key];
+            if (val && typeof val === 'object' && 'value' in val && 'unit' in val) {
+                style[key] = stringifySizeValue(val);
+            } else {
+                style[key] = val;
+            }
+        }
+        console.log(style, 'wo gaicde style');
+
+        updateComponentStyle(currentComponentId, style);
+    }
+
 
     return (
         <div className="p-4 space-y-6 border-b">
-            <h2 className="text-sm font-medium text-muted-foreground">页面</h2>
-            <Form {...form}>
-                <form onChange={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>名称</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="请输入页面名称" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
-                        name="path"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>路径</FormLabel>
-                                <FormControl>
-                                    <Input {...field} disabled className="opacity-70 cursor-not-allowed" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">视图</div>
-                        <Button variant="ghost" size="icon">+</Button>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">弹窗</div>
-                        <Button variant="ghost" size="icon">+</Button>
-                    </div>
-
-                    <FormField
-                        control={form.control}
-                        name="rollCodeMode"
-                        render={({ field }) => (
-                            <FormItem className="flex items-center justify-between">
-                                <div className="flex items-center gap-1">
-                                    <FormLabel className="text-sm">RollCode模式</FormLabel>
-                                    <Info className="w-3 h-3 text-muted-foreground" />
-                                </div>
-                                <FormControl>
-                                    <Switch checked={field.value} onCheckedChange={field.onChange} />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
-                </form>
+            <h2 className="text-sm font-medium text-muted-foreground">样式</h2>
+            <Form
+                style={{ width: '100%' }}
+                className="space-y-4"
+                form={form}
+                onValuesChange={valueChange}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 40 }}
+            >
+                {
+                    componentConfig[currentComponent.name]?.styleSetter?.map(setter => (
+                        <Form.Item key={setter.name} name={setter.name} label={setter.label}>
+                            {renderFormElement(setter)}
+                        </Form.Item>
+                    ))
+                }
             </Form>
         </div>
-    );
-};
+    )
+}

@@ -80,6 +80,7 @@ export function EditArea() {
       config.component,
       {
         id: component.id,
+        style:component.style,
         ...config.defaultProps,
         ...component.props,
       },

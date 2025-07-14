@@ -34,6 +34,12 @@ export function useMaterialDrop(accept: string[], id: string) {
                 name: componentItem.type,
                 props,
                 desc: componentItem.desc,
+                style:{
+                  // backgroundColor:'yellow',
+                  // width:'100%',
+                  // height:'100%'
+                  ...props
+                }
             }, id)
 
             toast(componentItem.type)

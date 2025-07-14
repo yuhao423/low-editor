@@ -8,12 +8,11 @@ export interface ButtonProps {
   text: string;
 }
 
-export const Button = ({ id, variant = 'default', text }: CommonComponentProps) => {
-  console.log(variant,'vamntt');
+export const Button = ({ id, style, variant = 'default', text }: CommonComponentProps) => {
   
   return (
     <div className="flex flex-wrap items-center gap-2 md:flex-row">
-      <ExampleButton data-component-id={id} variant={variant}>{text}</ExampleButton>
+      <ExampleButton data-component-id={id} style={style} variant={variant}>{text}</ExampleButton>
     </div>
   )
 }
@@ -28,8 +27,8 @@ export const meta = {
       name: 'variant',
       label: '按钮类型',
       renderType: 'select',
-      defaultBtnType:'default',
-      defaultText:'按钮',
+      defaultBtnType: 'default',
+      defaultText: '按钮',
       options: [
         { label: 'Primary', value: 'default' },
         { label: 'Destructive', value: 'destructive' },
@@ -45,4 +44,24 @@ export const meta = {
       renderType: 'input'
     }
   ],
+  styleSetter:[
+    {
+      name:'width',
+      label:'宽度',
+      renderType:'inputNumber',
+      defaultUnit:'px',
+      unit: 'px',
+      unitOptions:['px','%'],
+      defaultWidth:100
+    },
+      {
+      name:'height',
+      label:'高度',
+      renderType:'inputNumber',
+      defaultUnit:'px',
+      unit: 'px',
+      unitOptions:['px','%'],
+      defaultHeight:30
+    },
+  ]
 }

@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { create } from 'zustand';
 
 export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other';
@@ -10,6 +11,7 @@ export interface Component {
   children?: Component[];
   parentId?: string;
   desc: string;
+  style?: CSSProperties
 }
 
 export interface Page {
@@ -40,6 +42,7 @@ interface Actions {
   updateComponent: (id: string, props: Record<string, any>) => void;
   setCurComponentId: (componentId: string | null) => void
   setCurHoverComponentId: (componentId: string | null) => void
+  updateComponentStyle: (componentId: string, style: CSSProperties) => void
 }
 
 export const useEditorStore = create<State & Actions>((set, get) => ({
@@ -171,6 +174,22 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
       currentHoverComponent: targetComponent,
     });
   },
+  updateComponentStyle: (componentId, style) => {
+    const { pages, currentPageId } = get();
+    const updatedPages = pages.map((page) => {
+      if (page.id !== currentPageId) return page;
+
+      // 深拷贝组件树，避免直接修改原状态
+      const newComponents = updateComponentStyleById(componentId, style, page.components);
+      return {
+        ...page,
+        components: newComponents,
+      };
+    });
+
+    set({ pages: updatedPages });
+  },
+
 }));
 
 export function getComponentById(
@@ -197,4 +216,27 @@ export function removeComponentById(id: string, components: Component[]): Compon
       return comp;
     })
     .filter(Boolean) as Component[];
+}
+
+export function updateComponentStyleById(id: string, style: CSSProperties, components: Component[]): Component[] {
+  return components.map((comp) => {
+    if (comp.id === id) {
+      return {
+        ...comp,
+        style: {
+          ...comp.style,
+          ...style,
+        },
+      };
+    }
+
+    if (comp.children) {
+      return {
+        ...comp,
+        children: updateComponentStyleById(id, style, comp.children),
+      };
+    }
+
+    return comp;
+  });
 }
