@@ -1,13 +1,12 @@
-import React, { useRef, type MouseEventHandler } from "react";
-import { useCanvasStore } from "@/editor/stores/useCanvasStore";
-import HoverMask from "./HoverMask";
-import { useCurrentPage } from "@/editor/hooks/useCurrentPage";
-import { useEditorStore } from "@/editor/stores/useEditorStore";
-import SelectedMask from "./SelectedMask";
-
+import React, { useMemo, useRef, type MouseEventHandler } from 'react'
+import { useCanvasStore } from '@/editor/stores/useCanvasStore'
+import HoverMask from './HoverMask'
+import { useCurrentPage } from '@/editor/hooks/useCurrentPage'
+import { useEditorStore } from '@/editor/stores/useEditorStore'
+import SelectedMask from './SelectedMask'
 
 export function CanvasBox({ children }: { children?: React.ReactNode }) {
-  const { position, size } = useCanvasStore();
+  const { position, size } = useCanvasStore()
   const { currentPageId, setCurComponentId, currentHoverComponentId, currentComponentId, setCurHoverComponentId, currentHoverComponent } = useEditorStore()
   const canvasBox = useRef<HTMLDivElement>(null)
 
@@ -42,21 +41,24 @@ export function CanvasBox({ children }: { children?: React.ReactNode }) {
     }
   }
 
-  const hoverComponentName = currentHoverComponentId
-    ? currentHoverComponent?.name || currentHoverComponentId
-    : page?.name;
+  // const hoverComponentName = currentHoverComponentId ? currentHoverComponent?.name || currentHoverComponentId : page?.name
+
+  const hoverComponentName = useMemo(() => {
+    if (currentHoverComponent?.name === 'Page' || !currentHoverComponentId) return page?.name
+
+    return currentHoverComponent?.name || currentHoverComponentId
+  }, [currentHoverComponentId])
 
   const handleOnMouseLeave: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    const relatedTarget = e.relatedTarget as HTMLElement | null;
+    const relatedTarget = e.relatedTarget as HTMLElement | null
 
     // 如果鼠标还在 canvas 内，就不清空
     if (canvasBox?.current && relatedTarget && canvasBox.current?.contains(relatedTarget)) {
-      return;
+      return
     }
 
-    setCurHoverComponentId(undefined as unknown as null);
+    setCurHoverComponentId(undefined as unknown as null)
   }
-
 
   return (
     <div
@@ -65,7 +67,7 @@ export function CanvasBox({ children }: { children?: React.ReactNode }) {
       onMouseOver={handleMouseOver}
       onClick={handleCanvasClick}
       onMouseLeave={handleOnMouseLeave}
-      className="absolute border border-gray-300 bg-white shadow-md cursor-default"
+      className="absolute cursor-default border border-gray-300 bg-white shadow-md"
       style={{
         left: position.x,
         top: position.y,
@@ -73,33 +75,19 @@ export function CanvasBox({ children }: { children?: React.ReactNode }) {
         height: size.height,
       }}
     >
-      <div className="absolute left-0 -top-6 z-10 text-black text-sm pointer-events-none">
-        {hoverComponentName}
-      </div>
+      <div className="pointer-events-none absolute -top-6 left-0 z-10 text-sm text-black">{hoverComponentName}</div>
 
       {/* HoverMask 条件渲染 */}
-      {currentHoverComponentId && (
-        <HoverMask
-          portalWrapperClassId="portal-wrapper"
-          containerId="canvas-box"
-          componentId={currentHoverComponentId}
-        />
-      )}
+      {currentHoverComponentId && <HoverMask portalWrapperClassId="portal-wrapper" containerId="canvas-box" componentId={currentHoverComponentId} />}
 
       {/* SelectedMask 只在 hover 和 selected 不同且都有值，或只有 selected 有值时显示 */}
-      {currentComponentId &&
-        (!currentHoverComponentId || currentHoverComponentId !== currentComponentId) && (
-          <SelectedMask
-            portalWrapperClassId="portal-wrapper"
-            containerId="canvas-box"
-            componentId={currentComponentId}
-          />
-        )}
+      {currentComponentId && (!currentHoverComponentId || currentHoverComponentId !== currentComponentId) && (
+        <SelectedMask portalWrapperClassId="portal-wrapper" containerId="canvas-box" componentId={currentComponentId} />
+      )}
 
       <div id="portal-wrapper" className="portal-wrapper"></div>
 
       {children}
     </div>
-  );
-
+  )
 }
