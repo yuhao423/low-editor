@@ -98,7 +98,7 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
         pointerEvents: 'none',
         width: position.width,
         height: position.height,
-        zIndex: 'var(--hover-z-index)',
+        zIndex: 'var(--hover-index)',
         boxSizing: 'border-box',
       }}
     />,

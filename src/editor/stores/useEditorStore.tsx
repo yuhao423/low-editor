@@ -1,48 +1,47 @@
-import type { CSSProperties } from 'react';
-import { create } from 'zustand';
+import type { CSSProperties } from 'react'
+import { create } from 'zustand'
 
-export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other';
+export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other'
 
 export interface Component {
-  id: string;
-  name: string;
-  type?: ComponentType;
-  props: Record<string, any> | any;
-  children?: Component[];
-  parentId?: string;
-  desc: string;
+  id: string
+  name: string
+  type?: ComponentType
+  props: Record<string, any> | any
+  children?: Component[]
+  parentId?: string
+  desc: string
   style?: CSSProperties
 }
 
 export interface Page {
-  id: string;
-  name: string;
-  components: Component[];
+  id: string
+  name: string
+  components: Component[]
 }
 
 interface State {
-  pages: Page[];
-  currentPageId: string;
-  currentPage: Page | null;
-  currentComponentId: string | null;
+  pages: Page[]
+  currentPageId: string
+  currentPage: Page | null
+  currentComponentId: string | null
   /** 是点击的那一个组件 */
-  currentComponent: Component | null;
-  currentHoverComponentId: string | null | undefined;
-  currentHoverComponent: Component | null;
+  currentComponent: Component | null
+  currentHoverComponentId: string | null | undefined
+  currentHoverComponent: Component | null
 }
-
 
 /** 点击了一定高亮组件 但是高亮了不一定是点击选中的组件 */
 interface Actions {
-  setCurrentPage: (id: string) => void;
-  addPage: (name?: string) => void;
-  deletePage: (id: string) => void;
-  addComponent: (component: Component, parentId?: string) => void;
-  delComponent: (id: string) => void;
-  updateComponent: (id: string, props: Record<string, any>) => void;
+  setCurrentPage: (id: string) => void
+  addPage: (name?: string) => void
+  deletePage: (id: string) => void
+  addComponent: (component: Component, parentId?: string) => void
+  delComponent: (id: string) => void
+  updateComponent: (id: string, props: Record<string, any>) => void
   setCurComponentId: (componentId: string | null) => void
   setCurHoverComponentId: (componentId: string | null) => void
-  updateComponentStyle: (componentId: string, style: CSSProperties) => void
+  updateComponentStyle: (componentId: string, style: CSSProperties, replace?: boolean) => void
 }
 
 export const useEditorStore = create<State & Actions>((set, get) => ({
@@ -68,11 +67,11 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
   currentHoverComponent: null,
   setCurrentPage: (id) => set({ currentPageId: id }),
   get currentPage() {
-    const { pages, currentPageId } = get();
-    return pages.find((p) => p.id === currentPageId) || null;
+    const { pages, currentPageId } = get()
+    return pages.find((p) => p.id === currentPageId) || null
   },
   addPage: (name = '新页面') => {
-    const newId = `page-${Date.now()}`;
+    const newId = `page-${Date.now()}`
     set((state) => ({
       pages: [
         ...state.pages,
@@ -91,152 +90,150 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
         },
       ],
       currentPageId: newId,
-    }));
+    }))
   },
 
   deletePage: (id) => {
     set((state) => {
-      const remainingPages = state.pages.filter((p) => p.id !== id);
-      const fallbackPage = remainingPages[0]?.id || '';
+      const remainingPages = state.pages.filter((p) => p.id !== id)
+      const fallbackPage = remainingPages[0]?.id || ''
       return {
         pages: remainingPages,
         currentPageId: fallbackPage,
-      };
-    });
+      }
+    })
   },
 
   addComponent: (component, parentId) => {
-    const { pages, currentPageId } = get();
+    const { pages, currentPageId } = get()
     const updatedPages = pages.map((page) => {
-      if (page.id !== currentPageId) return page;
+      if (page.id !== currentPageId) return page
 
-      const root = page.components;
+      const root = page.components
       if (!parentId) {
-        return { ...page, components: [...root, component] };
+        return { ...page, components: [...root, component] }
       }
 
-      const target = getComponentById(parentId, root);
+      const target = getComponentById(parentId, root)
       if (target) {
-        if (!target.children) target.children = [];
-        target.children.push(component);
-        component.parentId = parentId;
+        if (!target.children) target.children = []
+        target.children.push(component)
+        component.parentId = parentId
       }
 
-      return { ...page };
-    });
+      return { ...page }
+    })
 
-    set({ pages: updatedPages });
+    set({ pages: updatedPages })
   },
 
   delComponent: (id: string | null) => {
-    const { pages, currentPageId } = get();
+    const { pages, currentPageId } = get()
     const updatedPages = pages.map((page) => {
-      if (page.id !== currentPageId) return page;
+      if (page.id !== currentPageId) return page
 
-      const root = [...page.components];
-      const newTree = removeComponentById(id!, root);
-      return { ...page, components: newTree };
-    });
+      const root = [...page.components]
+      const newTree = removeComponentById(id!, root)
+      return { ...page, components: newTree }
+    })
 
-    set({ pages: updatedPages });
+    set({ pages: updatedPages })
   },
 
   updateComponent: (id, props) => {
-    const { pages, currentPageId } = get();
+    const { pages, currentPageId } = get()
     const updatedPages = pages.map((page) => {
-      if (page.id !== currentPageId) return page;
+      if (page.id !== currentPageId) return page
 
-      const target = getComponentById(id, page.components);
+      const target = getComponentById(id, page.components)
       if (target) {
-        target.props = { ...target.props, ...props };
+        target.props = { ...target.props, ...props }
       }
 
-      return { ...page };
-    });
+      return { ...page }
+    })
 
-    set({ pages: updatedPages });
+    set({ pages: updatedPages })
   },
   setCurComponentId: (componentId) => {
-    const page = get().pages.find(p => p.id === get().currentPageId);
-    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null;
+    const page = get().pages.find((p) => p.id === get().currentPageId)
+    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null
 
     set({
       currentComponentId: componentId,
       currentComponent: targetComponent,
-    });
+    })
   },
   setCurHoverComponentId: (componentId) => {
-    const page = get().pages.find(p => p.id === get().currentPageId);
-    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null;
+    const page = get().pages.find((p) => p.id === get().currentPageId)
+    const targetComponent = componentId && page ? getComponentById(componentId, page.components) : null
 
     set({
       currentHoverComponentId: componentId,
       currentHoverComponent: targetComponent,
-    });
+    })
   },
-  updateComponentStyle: (componentId, style) => {
-    const { pages, currentPageId } = get();
+  updateComponentStyle: (componentId, style, replace: boolean = false) => {
+    const { pages, currentPageId } = get()
     const updatedPages = pages.map((page) => {
-      if (page.id !== currentPageId) return page;
+      if (page.id !== currentPageId) return page
 
       // 深拷贝组件树，避免直接修改原状态
-      const newComponents = updateComponentStyleById(componentId, style, page.components);
+      const newComponents = updateComponentStyleById(componentId, style, page.components, replace)
       return {
         ...page,
         components: newComponents,
-      };
-    });
+      }
+    })
 
-    set({ pages: updatedPages });
+    set({ pages: updatedPages })
   },
+}))
 
-}));
-
-export function getComponentById(
-  id: string,
-  components: Component[]
-): Component | null {
+export function getComponentById(id: string, components: Component[]): Component | null {
   for (const component of components) {
-    if (component.id === id) return component;
+    if (component.id === id) return component
     if (component.children?.length) {
-      const found = getComponentById(id, component.children);
-      if (found) return found;
+      const found = getComponentById(id, component.children)
+      if (found) return found
     }
   }
-  return null;
+  return null
 }
 
 export function removeComponentById(id: string, components: Component[]): Component[] {
   return components
     .map((comp) => {
-      if (comp.id === id) return null;
+      if (comp.id === id) return null
       if (comp.children) {
-        comp.children = removeComponentById(id, comp.children);
+        comp.children = removeComponentById(id, comp.children)
       }
-      return comp;
+      return comp
     })
-    .filter(Boolean) as Component[];
+    .filter(Boolean) as Component[]
 }
 
-export function updateComponentStyleById(id: string, style: CSSProperties, components: Component[]): Component[] {
+export function updateComponentStyleById(id: string, style: CSSProperties, components: Component[], replace = false): Component[] {
   return components.map((comp) => {
     if (comp.id === id) {
       return {
         ...comp,
-        style: {
-          ...comp.style,
-          ...style,
-        },
-      };
+        style: replace
+          ? { ...style }
+          : {
+              ...comp.style,
+              ...style,
+            },
+      }
     }
 
     if (comp.children) {
       return {
         ...comp,
-        children: updateComponentStyleById(id, style, comp.children),
-      };
+        children: updateComponentStyleById(id, style, comp.children, replace),
+      }
     }
 
-    return comp;
-  });
+    return comp
+  })
 }
