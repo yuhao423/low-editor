@@ -49,11 +49,12 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
 
     const isPage = currentHoverComponent?.name === 'Page'
 
+    const EXPAND = 2 // 扩大 2px 四周
     setPosition({
-      top: isPage ? 0 : (top - containerTop + container.scrollTop) / scale,
-      left: isPage ? 0 : (left - containerLeft + container.scrollTop) / scale,
-      width: width / scale,
-      height: height / scale,
+      top: isPage ? 0 : (top - containerTop + container.scrollTop) / scale - EXPAND,
+      left: isPage ? 0 : (left - containerLeft + container.scrollLeft) / scale - EXPAND,
+      width: width / scale + EXPAND * 1,
+      height: height / scale + EXPAND * 1,
     })
   }
   const el = useMemo(() => {
