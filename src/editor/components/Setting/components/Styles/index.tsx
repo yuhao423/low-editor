@@ -9,7 +9,6 @@ import { CustomCssDialog } from './components/CustomCssDialog'
 import { debounce } from 'lodash-es'
 import { DEFAULT_UNITS } from '@/utils'
 import styleToObject from 'style-to-object'
-import type { editor } from 'monaco-editor'
 import { toast } from 'sonner'
 import { ShadcnSelectAdapter } from '../ShadcnSelectAdapter'
 
@@ -64,7 +63,7 @@ export function Styles() {
   const [open, setOpen] = useState(false)
 
   // 解析 CSS 字符串为对象
-  const handleCssChange = debounce((value: string, ev: editor.IModelContentChangedEvent) => {
+  const handleCssChange = debounce((value: string) => {
     try {
       const cleaned = value
         .replace(/\/\*.*\*\//, '')
@@ -123,7 +122,7 @@ export function Styles() {
       const value = parseSizeValue(raw, ['px', '%'])
       return <SizeInput dimension={name as Dimension} value={value} units={setting.unitOptions} onChange={(val) => form.setFieldsValue({ [name]: val })} />
     }
-    return <div>yu</div>
+    return <div>不支持的控件类型</div>
   }
 
   if (!currentComponentId || !currentComponent) return null

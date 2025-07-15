@@ -12,7 +12,7 @@ export function useMaterialDrop(accept: string[], id: string) {
 
   const [{ canDrop }, drop] = useDrop<unknown, unknown, { canDrop: boolean }>(() => ({
     accept,
-    hover: (item, monitor) => {
+    hover: (_, monitor) => {
       const offset = monitor.getClientOffset()
       if (offset) {
         lastMousePosition = { x: offset.x, y: offset.y }
