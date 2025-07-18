@@ -1,6 +1,7 @@
-import MonacoEditor, { type OnMount } from '@monaco-editor/react'
-import type { editor } from 'monaco-editor'
-import type { CustomCssDialogProps } from './CustomCssDialog'
+import MonacoEditor, { type OnMount } from "@monaco-editor/react"
+import type { editor } from "monaco-editor"
+
+import type { CustomCssDialogProps } from "./CustomCssDialog"
 
 export interface EditorFile {
   name: string
@@ -20,13 +21,13 @@ export default function CssEditor(props: Props) {
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {
-      editor.getAction('editor.action.formatDocument')?.run()
+      editor.getAction("editor.action.formatDocument")?.run()
     })
   }
 
   const handleChange = (value: string | undefined, ev: editor.IModelContentChangedEvent) => {
     if (onChange) {
-      onChange(value ?? '', ev)
+      onChange(value ?? "", ev)
     }
   }
 

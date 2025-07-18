@@ -1,47 +1,52 @@
-interface TreeNode {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  children?: TreeNode[];
-}
-import { useState } from "react";
-import { cn } from "@/lib/utils"; // shadcn 的 className 合并工具
-import { ChevronDown, ChevronRight, Image, Grid3X3, FileText, Square } from "lucide-react";
+import { useState } from "react"
+
+// shadcn 的 className 合并工具
+import { ChevronDown, ChevronRight, FileText, Grid3X3, Image, Square } from "lucide-react"
+
+import { cn } from "@/lib/utils"
 
 interface TreeNode {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  children?: TreeNode[];
+  id: string
+  name: string
+  icon: React.ReactNode
+  children?: TreeNode[]
+}
+
+interface TreeNode {
+  id: string
+  name: string
+  icon: React.ReactNode
+  children?: TreeNode[]
 }
 
 interface TreeItemProps {
-  node: TreeNode;
-  level?: number;
-  selectedId?: string;
-  onSelect?: (id: string) => void;
+  node: TreeNode
+  level?: number
+  selectedId?: string
+  onSelect?: (id: string) => void
 }
 
 export const TreeItem = ({ node, level = 0, selectedId, onSelect }: TreeItemProps) => {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(true)
 
-  const hasChildren = node.children && node.children.length > 0;
+  const hasChildren = node.children && node.children.length > 0
 
   return (
     <div className="pl-2">
       <div
-        className={cn(
-          "flex items-center space-x-1 py-1 px-2 rounded-md cursor-pointer hover:bg-muted",
-          selectedId === node.id && "bg-primary text-white"
-        )}
+        className={cn("flex items-center space-x-1 py-1 px-2 rounded-md cursor-pointer hover:bg-muted", selectedId === node.id && "bg-primary text-white")}
         style={{ paddingLeft: `${level * 16}px` }}
         onClick={() => {
-          if (hasChildren) setExpanded(!expanded);
-          onSelect?.(node.id);
+          if (hasChildren) setExpanded(!expanded)
+          onSelect?.(node.id)
         }}
       >
         {hasChildren ? (
-          expanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />
+          expanded ? (
+            <ChevronDown size={16} />
+          ) : (
+            <ChevronRight size={16} />
+          )
         ) : (
           <span className="w-4" /> // 空位对齐
         )}
@@ -51,19 +56,13 @@ export const TreeItem = ({ node, level = 0, selectedId, onSelect }: TreeItemProp
       {hasChildren && expanded && (
         <div>
           {node.children!.map((child) => (
-            <TreeItem
-              key={child.id}
-              node={child}
-              level={level + 1}
-              selectedId={selectedId}
-              onSelect={onSelect}
-            />
+            <TreeItem key={child.id} node={child} level={level + 1} selectedId={selectedId} onSelect={onSelect} />
           ))}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 const exampleTree: TreeNode = {
   id: "root",
   name: "推荐商品绢带",
@@ -93,19 +92,14 @@ const exampleTree: TreeNode = {
     },
     // 网格容器4 - 10 略
   ],
-};
+}
 
 export default function PageTree() {
-  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined)
 
   return (
     <div className="p-2 w-64">
-      <TreeItem
-        node={exampleTree}
-        selectedId={selectedId}
-        onSelect={setSelectedId}
-      />
+      <TreeItem node={exampleTree} selectedId={selectedId} onSelect={setSelectedId} />
     </div>
-  );
+  )
 }
-

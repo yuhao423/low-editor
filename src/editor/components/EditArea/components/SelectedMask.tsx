@@ -1,7 +1,9 @@
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
+import { useLayoutEffect, useMemo, useRef, useState } from "react"
+
+import { createPortal } from "react-dom"
+
+import { useCanvasStore } from "@/editor/stores/useCanvasStore"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
 
 export interface HoverMaskProps {
   containerId: string
@@ -31,7 +33,7 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
 
     const { top, left, width, height } = node.getBoundingClientRect()
     const { top: containerTop, left: containerLeft } = container.getBoundingClientRect()
-    const isPage = currentComponent?.name === 'Page'
+    const isPage = currentComponent?.name === "Page"
 
     const EXPAND = 2 // 扩大 2px 四周
     setPosition({
@@ -73,31 +75,31 @@ function SelectedMask({ containerId, componentId }: HoverMaskProps) {
     const container = document.getElementById(containerId)
     if (!container) return
 
-    window.addEventListener('resize', debounceUpdate)
-    container.addEventListener('scroll', debounceUpdate)
+    window.addEventListener("resize", debounceUpdate)
+    container.addEventListener("scroll", debounceUpdate)
 
     return () => {
-      window.removeEventListener('resize', debounceUpdate)
-      container.removeEventListener('scroll', debounceUpdate)
+      window.removeEventListener("resize", debounceUpdate)
+      container.removeEventListener("scroll", debounceUpdate)
     }
   }, [containerId])
 
   const el = useMemo(() => {
-    return document.getElementById('portal-wrapper')
+    return document.getElementById("portal-wrapper")
   }, [])
 
   return createPortal(
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: position.left,
         top: position.top,
-        border: '2px solid var(--primary-main)',
-        pointerEvents: 'none',
+        border: "2px solid var(--primary-main)",
+        pointerEvents: "none",
         width: position.width,
         height: position.height,
-        zIndex: 'var(--hover-index)',
-        boxSizing: 'border-box',
+        zIndex: "var(--hover-index)",
+        boxSizing: "border-box",
       }}
     />,
     el!,

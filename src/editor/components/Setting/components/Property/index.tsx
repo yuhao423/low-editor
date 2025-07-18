@@ -1,9 +1,12 @@
-import { Form } from 'antd'
-import { useMemo } from 'react'
-import { type ComponentConfig, type ComponentSetter, useComponentConfigStore } from '@/editor/stores/componentsConfig'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
-import { Input as YuInput } from '@/components/ui/input'
-import { ShadcnSelectAdapter } from '../ShadcnSelectAdapter'
+import { useMemo } from "react"
+
+import { Form } from "antd"
+
+import { Input as YuInput } from "@/components/ui/input"
+import { type ComponentConfig, type ComponentSetter, useComponentConfigStore } from "@/editor/stores/componentsConfig"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
+
+import { ShadcnSelectAdapter } from "../ShadcnSelectAdapter"
 
 export function Property() {
   const [form] = Form.useForm()
@@ -11,7 +14,7 @@ export function Property() {
   const { currentComponentId, currentComponent, updateComponent } = useEditorStore()
   const { componentConfig } = useComponentConfigStore()
 
-  const setters = componentConfig[currentComponent?.name || '']?.setter || []
+  const setters = componentConfig[currentComponent?.name || ""]?.setter || []
 
   /** 给 form 表单初始值 确保表单字段不会出现 undefined */
   const initialValues = useMemo(() => {
@@ -22,7 +25,7 @@ export function Property() {
 
     for (const setter of setters) {
       if (merged[setter.name] === undefined) {
-        merged[setter.name] = setter.defaultValue ?? ''
+        merged[setter.name] = setter.defaultValue ?? ""
       }
     }
 
@@ -33,12 +36,12 @@ export function Property() {
     const { renderType, options, name, defaultValue } = setting
     const value = form.getFieldValue(name)
 
-    if (renderType === 'select') {
-      return <ShadcnSelectAdapter value={value ?? ''} onChange={(v) => form.setFieldValue(name, v)} options={options || []} placeholder={defaultValue ?? '请选择'} />
+    if (renderType === "select") {
+      return <ShadcnSelectAdapter value={value ?? ""} onChange={(v) => form.setFieldValue(name, v)} options={options || []} placeholder={defaultValue ?? "请选择"} />
     }
 
-    if (renderType === 'input') {
-      return <YuInput value={value ?? ''} onChange={(e) => form.setFieldValue(name, e.target.value)} />
+    if (renderType === "input") {
+      return <YuInput value={value ?? ""} onChange={(e) => form.setFieldValue(name, e.target.value)} />
     }
 
     return <div>不支持的控件类型</div>
@@ -55,7 +58,7 @@ export function Property() {
   return (
     <div className="space-y-6 border-b p-4">
       <h2 className="text-muted-foreground text-sm font-medium">{currentComponent.desc}</h2>
-      <Form style={{ width: '100%' }} className="space-y-4" form={form} onValuesChange={valueChange} initialValues={initialValues} labelCol={{ span: 4 }} wrapperCol={{ span: 40 }}>
+      <Form style={{ width: "100%" }} className="space-y-4" form={form} onValuesChange={valueChange} initialValues={initialValues} labelCol={{ span: 4 }} wrapperCol={{ span: 40 }}>
         <Form.Item label="组件id">
           <YuInput value={currentComponent.id} disabled />
         </Form.Item>

@@ -1,9 +1,11 @@
-import React, { useMemo, useRef, type MouseEventHandler } from 'react'
-import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import HoverMask from './HoverMask'
-import { useCurrentPage } from '@/editor/hooks/useCurrentPage'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
-import SelectedMask from './SelectedMask'
+import React, { type MouseEventHandler, useMemo, useRef } from "react"
+
+import { useCurrentPage } from "@/editor/hooks/useCurrentPage"
+import { useCanvasStore } from "@/editor/stores/useCanvasStore"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
+
+import HoverMask from "./HoverMask"
+import SelectedMask from "./SelectedMask"
 
 export function CanvasBox({ children }: { children?: React.ReactNode }) {
   const { position, size } = useCanvasStore()
@@ -44,7 +46,7 @@ export function CanvasBox({ children }: { children?: React.ReactNode }) {
   // const hoverComponentName = currentHoverComponentId ? currentHoverComponent?.name || currentHoverComponentId : page?.name
 
   const hoverComponentName = useMemo(() => {
-    if (currentHoverComponent?.name === 'Page' || !currentHoverComponentId) return page?.name
+    if (currentHoverComponent?.name === "Page" || !currentHoverComponentId) return page?.name
 
     return currentHoverComponent?.name || currentHoverComponentId
   }, [currentHoverComponentId])

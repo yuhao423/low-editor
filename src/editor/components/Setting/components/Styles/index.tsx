@@ -1,23 +1,26 @@
-import { Form } from 'antd'
-import { useEffect, useState, type CSSProperties } from 'react'
-import { useComponentConfigStore, type ComponentSetter } from '@/editor/stores/componentsConfig'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
-import { Input as YuInput } from '@/components/ui/input'
-import { SizeInput, type Dimension } from '@/components/ui/sizeInput'
-import { parseSizeValue, stringifySizeValue } from '@/utils/styleParser'
-import { CustomCssDialog } from './components/CustomCssDialog'
-import { debounce } from 'lodash-es'
-import { DEFAULT_UNITS } from '@/utils'
-import styleToObject from 'style-to-object'
-import { toast } from 'sonner'
-import { ShadcnSelectAdapter } from '../ShadcnSelectAdapter'
+import { type CSSProperties, useEffect, useState } from "react"
+
+import { Form } from "antd"
+import { debounce } from "lodash-es"
+import { toast } from "sonner"
+import styleToObject from "style-to-object"
+
+import { Input as YuInput } from "@/components/ui/input"
+import { type Dimension, SizeInput } from "@/components/ui/sizeInput"
+import { type ComponentSetter, useComponentConfigStore } from "@/editor/stores/componentsConfig"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
+import { DEFAULT_UNITS } from "@/utils"
+import { parseSizeValue, stringifySizeValue } from "@/utils/styleParser"
+
+import { ShadcnSelectAdapter } from "../ShadcnSelectAdapter"
+import { CustomCssDialog } from "./components/CustomCssDialog"
 
 // 工具函数：解析组件样式 → 表单可用值
 function parseStyleForForm(style: CSSProperties = {}): Record<string, any> {
   const result: Record<string, any> = {}
 
   for (const [key, val] of Object.entries(style)) {
-    if ((key === 'width' || key === 'height') && typeof val === 'string') {
+    if ((key === "width" || key === "height") && typeof val === "string") {
       result[key] = parseSizeValue(val)
     } else {
       result[key] = val
@@ -31,7 +34,7 @@ function normalizeStyleFromForm(values: Record<string, any>): Record<string, any
   const style: Record<string, any> = {}
   for (const key in values) {
     const val = values[key]
-    if (val && typeof val === 'object' && 'value' in val && 'unit' in val) {
+    if (val && typeof val === "object" && "value" in val && "unit" in val) {
       style[key] = stringifySizeValue(val)
     } else {
       style[key] = val
@@ -46,7 +49,7 @@ function toCssStr(css: Record<string, any>): string {
   for (const key in css) {
     let value = css[key]
     if (!value) continue
-    if ((key === 'width' || key === 'height') && typeof value === 'string' && !DEFAULT_UNITS.some((unit) => value.endsWith(unit))) {
+    if ((key === "width" || key === "height") && typeof value === "string" && !DEFAULT_UNITS.some((unit) => value.endsWith(unit))) {
       value += DEFAULT_UNITS[0]
     }
     str += `  ${key}: ${value};\n`
@@ -66,16 +69,16 @@ export function Styles() {
   const handleCssChange = debounce((value: string) => {
     try {
       const cleaned = value
-        .replace(/\/\*.*\*\//, '')
-        .replace(/(\.?[^{]+{)/, '')
-        .replace('}', '')
+        .replace(/\/\*.*\*\//, "")
+        .replace(/(\.?[^{]+{)/, "")
+        .replace("}", "")
       const parsed: Record<string, any> = {}
       styleToObject(cleaned, (name, value) => {
         parsed[name.replace(/-\w/, (m) => m[1].toUpperCase())] = value
       })
       setCss(parsed)
     } catch (error) {
-      console.warn('CSS 解析失败', error)
+      console.warn("CSS 解析失败", error)
     }
   }, 500)
 
@@ -98,8 +101,8 @@ export function Styles() {
 
   // 提交自定义 CSS 字符串
   const handleCssSubmit = () => {
-    if (!css || typeof css !== 'object') {
-      toast.error('请输入正确的 CSS')
+    if (!css || typeof css !== "object") {
+      toast.error("请输入正确的 CSS")
       return
     }
     updateComponentStyle(currentComponentId!, css, true)
@@ -111,15 +114,15 @@ export function Styles() {
   const renderFormElement = (setting: ComponentSetter) => {
     const { renderType, options, name, defaultValue } = setting
     const itemValue = form.getFieldValue(name)
-    console.log(itemValue, 'tt')
+    console.log(itemValue, "tt")
 
-    if (renderType === 'select') {
-      return <ShadcnSelectAdapter value={itemValue ?? ''} onChange={(v) => form.setFieldValue(name, v)} options={options || []} placeholder={defaultValue ?? '请选择'} />
-    } else if (renderType === 'input') {
-      return <YuInput value={itemValue ?? ''} onChange={(e) => form.setFieldValue(name, e.target.value)} />
-    } else if (renderType === 'inputNumber') {
+    if (renderType === "select") {
+      return <ShadcnSelectAdapter value={itemValue ?? ""} onChange={(v) => form.setFieldValue(name, v)} options={options || []} placeholder={defaultValue ?? "请选择"} />
+    } else if (renderType === "input") {
+      return <YuInput value={itemValue ?? ""} onChange={(e) => form.setFieldValue(name, e.target.value)} />
+    } else if (renderType === "inputNumber") {
       const raw: any = currentComponent?.style?.[name as keyof CSSProperties]
-      const value = parseSizeValue(raw, ['px', '%'])
+      const value = parseSizeValue(raw, ["px", "%"])
       return <SizeInput dimension={name as Dimension} value={value} units={setting.unitOptions} onChange={(val) => form.setFieldsValue({ [name]: val })} />
     }
     return <div>不支持的控件类型</div>
@@ -130,7 +133,7 @@ export function Styles() {
   return (
     <div className="space-y-6 border-b p-4">
       <h2 className="text-muted-foreground text-sm font-medium">样式</h2>
-      <Form form={form} className="space-y-4" style={{ width: '100%' }} labelCol={{ span: 4 }} wrapperCol={{ span: 40 }} onValuesChange={handleFormChange}>
+      <Form form={form} className="space-y-4" style={{ width: "100%" }} labelCol={{ span: 4 }} wrapperCol={{ span: 40 }} onValuesChange={handleFormChange}>
         {componentConfig[currentComponent.name]?.styleSetter?.map((setter) => (
           <Form.Item key={setter.name} name={setter.name} label={setter.label}>
             {renderFormElement(setter)}

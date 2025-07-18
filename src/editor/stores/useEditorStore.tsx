@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react'
-import { create } from 'zustand'
+import type { CSSProperties } from "react"
 
-export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other'
+import { create } from "zustand"
+
+export type ComponentType = "Layout" | "Form" | "Display" | "Other"
 
 export interface Component {
   id: string
@@ -47,20 +48,20 @@ interface Actions {
 export const useEditorStore = create<State & Actions>((set, get) => ({
   pages: [
     {
-      id: 'page-1',
-      name: '页面1',
+      id: "page-1",
+      name: "页面1",
       components: [
         {
-          id: '1',
-          name: 'Page',
-          type: 'Display',
+          id: "1",
+          name: "Page",
+          type: "Display",
           props: {},
-          desc: '页面组件',
+          desc: "页面组件",
         },
       ],
     },
   ],
-  currentPageId: 'page-1',
+  currentPageId: "page-1",
   currentComponentId: null,
   currentComponent: null,
   currentHoverComponentId: null,
@@ -70,7 +71,7 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
     const { pages, currentPageId } = get()
     return pages.find((p) => p.id === currentPageId) || null
   },
-  addPage: (name = '新页面') => {
+  addPage: (name = "新页面") => {
     const newId = `page-${Date.now()}`
     set((state) => ({
       pages: [
@@ -81,10 +82,10 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
           components: [
             {
               id: `${newId}-root`,
-              name: 'Page',
-              type: 'Display',
+              name: "Page",
+              type: "Display",
               props: {},
-              desc: '页面组件',
+              desc: "页面组件",
             },
           ],
         },
@@ -96,7 +97,7 @@ export const useEditorStore = create<State & Actions>((set, get) => ({
   deletePage: (id) => {
     set((state) => {
       const remainingPages = state.pages.filter((p) => p.id !== id)
-      const fallbackPage = remainingPages[0]?.id || ''
+      const fallbackPage = remainingPages[0]?.id || ""
       return {
         pages: remainingPages,
         currentPageId: fallbackPage,

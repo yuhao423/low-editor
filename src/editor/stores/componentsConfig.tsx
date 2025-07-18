@@ -1,11 +1,13 @@
-import { create } from 'zustand'
-import { Container } from '@/editor/materials/Container'
-import { Button, meta } from '@/editor/materials/Button'
-import Page from '@/editor/materials/Page'
-import type { CSSProperties } from 'react'
+import type { CSSProperties } from "react"
+
+import { create } from "zustand"
+
+import { Button, meta } from "@/editor/materials/Button"
+import { Container } from "@/editor/materials/Container"
+import Page from "@/editor/materials/Page"
 
 /** 组件分类的类型 */
-export type ComponentType = 'Layout' | 'Form' | 'Display' | 'Other'
+export type ComponentType = "Layout" | "Form" | "Display" | "Other"
 
 /** 映射用的 */
 export interface ComponentSetter {
@@ -39,35 +41,35 @@ interface Action {
 export const useComponentConfigStore = create<State & Action>((set) => ({
   componentConfig: {
     Container: {
-      name: 'Container',
+      name: "Container",
       defaultProps: {},
       defaultStyle: {},
       component: Container,
-      type: 'Layout',
-      desc: '容器组件',
+      type: "Layout",
+      desc: "容器组件",
     },
     Button: {
-      name: 'Button',
+      name: "Button",
       defaultProps: {
-        variant: meta.setter.find((item) => item.name === 'variant')?.defaultBtnType,
-        text: meta.setter.find((item) => item.name === 'variant')?.defaultText,
+        variant: meta.setter.find((item) => item.name === "variant")?.defaultBtnType,
+        text: meta.setter.find((item) => item.name === "variant")?.defaultText,
       },
       defaultStyle: {
-        width: getSetterItemAddUnit(meta.styleSetter, 'width', 'defaultWidth', 'defaultUnit'),
-        height: getSetterItemAddUnit(meta.styleSetter, 'height', 'defaultHeight', 'defaultUnit'),
+        width: getSetterItemAddUnit(meta.styleSetter, "width", "defaultWidth", "defaultUnit"),
+        height: getSetterItemAddUnit(meta.styleSetter, "height", "defaultHeight", "defaultUnit"),
       },
-      type: 'Form',
-      desc: '按钮组件',
+      type: "Form",
+      desc: "按钮组件",
       setter: meta.setter,
       styleSetter: meta.styleSetter,
       component: Button,
     },
     Page: {
-      name: 'Page',
+      name: "Page",
       defaultProps: {},
       component: Page,
-      type: 'Display',
-      desc: '根组件',
+      type: "Display",
+      desc: "根组件",
     },
   },
   registerComponent: (name, componentConfig) =>
@@ -97,9 +99,9 @@ export function getSetterItem(setters: ComponentSetter[], name: string): Compone
  * @param unitKey 单位字段名，如 'defaultUnit'
  * @returns 拼接后的默认值字符串，如果没找到返回空字符串
  */
-export function getSetterItemAddUnit(setters: ComponentSetter[], name: string, valueKey: string = 'defaultWidth', unitKey: string = 'defaultUnit'): string {
+export function getSetterItemAddUnit(setters: ComponentSetter[], name: string, valueKey: string = "defaultWidth", unitKey: string = "defaultUnit"): string {
   const item = setters.find((s) => s.name === name)
-  if (!item) return ''
+  if (!item) return ""
 
   const value = (item as any)[valueKey]
   const unit = (item as any)[unitKey]
@@ -108,22 +110,22 @@ export function getSetterItemAddUnit(setters: ComponentSetter[], name: string, v
     return `${value}${unit}`
   }
 
-  return ''
+  return ""
 }
 
 export function getDefaultValueFromSetter(item?: ComponentSetter): string {
-  if (!item) return ''
+  if (!item) return ""
 
-  if ('defaultWidth' in item || 'defaultHeight' in item) {
+  if ("defaultWidth" in item || "defaultHeight" in item) {
     const width = item.defaultWidth ?? item.defaultHeight
-    const unit = item.defaultUnit ?? ''
-    return width ? `${width}${unit}` : ''
+    const unit = item.defaultUnit ?? ""
+    return width ? `${width}${unit}` : ""
   }
 
-  const candidates = ['defaultValue', 'defaultText', 'defaultBtnType', 'default']
+  const candidates = ["defaultValue", "defaultText", "defaultBtnType", "default"]
   for (const key of candidates) {
     if (item[key]) return item[key]
   }
 
-  return ''
+  return ""
 }

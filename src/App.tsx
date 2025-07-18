@@ -1,5 +1,6 @@
-import LowCodeEditor from './editor'
-import { Toaster } from '@/components/ui/sonner'
+import { Toaster } from "@/components/ui/sonner"
+
+import LowCodeEditor from "./editor"
 
 function App() {
   return (

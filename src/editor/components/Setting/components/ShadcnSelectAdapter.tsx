@@ -1,4 +1,4 @@
-import { Select as ASlect, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { Select as ASlect, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export type Option<T = string> = { label: string; value: T }
 
@@ -15,9 +15,9 @@ export function ShadcnSelectAdapter<T extends string | number>({
   placeholder?: string
 }) {
   return (
-    <ASlect value={value?.toString() ?? ''} onValueChange={(v) => onChange?.(v as T)}>
+    <ASlect value={value?.toString() ?? ""} onValueChange={(v) => onChange?.(v as T)}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={placeholder ?? '请选择'} />
+        <SelectValue placeholder={placeholder ?? "请选择"} />
       </SelectTrigger>
       <SelectContent>
         {options.map((opt) => (

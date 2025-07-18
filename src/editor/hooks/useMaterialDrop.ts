@@ -1,7 +1,8 @@
-import { useDrop } from 'react-dnd'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
-import { useComponentConfigStore, type ComponentConfig } from '@/editor/stores/componentsConfig'
-import { toast } from 'sonner'
+import { useDrop } from "react-dnd"
+import { toast } from "sonner"
+
+import { type ComponentConfig, useComponentConfigStore } from "@/editor/stores/componentsConfig"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
 
 // 全局记录最后一次鼠标坐标
 let lastMousePosition: { x: number; y: number } | null = null

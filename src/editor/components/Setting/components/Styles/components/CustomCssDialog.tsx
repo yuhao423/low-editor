@@ -1,8 +1,10 @@
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Plus } from 'lucide-react'
-import CssEditor from './CssEditor'
-import type { editor } from 'monaco-editor'
+import { Plus } from "lucide-react"
+import type { editor } from "monaco-editor"
+
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
+import CssEditor from "./CssEditor"
 
 export interface CustomCssDialogProps {
   value: string

@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useCanvasStore } from '@/editor/stores/useCanvasStore'
-import { useEditorStore } from '@/editor/stores/useEditorStore'
+import { useEffect, useMemo, useState } from "react"
+
+import { createPortal } from "react-dom"
+
+import { useCanvasStore } from "@/editor/stores/useCanvasStore"
+import { useEditorStore } from "@/editor/stores/useEditorStore"
+
 export interface HoverMaskProps {
   /** 画布区的根元素的 id */
   containerId: string
@@ -47,7 +50,7 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
     const { top, left, width, height } = node.getBoundingClientRect()
     const { top: containerTop, left: containerLeft } = container.getBoundingClientRect()
 
-    const isPage = currentHoverComponent?.name === 'Page'
+    const isPage = currentHoverComponent?.name === "Page"
 
     const EXPAND = 2 // 扩大 2px 四周
     setPosition({
@@ -67,21 +70,21 @@ function HoverMask({ containerId, componentId }: HoverMaskProps) {
     // container!.appendChild(el);
     // return el;
 
-    return document.getElementById('portal-wrapper')
+    return document.getElementById("portal-wrapper")
   }, [])
 
   return createPortal(
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: position.left,
         top: position.top,
-        border: '2px solid var(--primary-main)',
-        pointerEvents: 'none',
+        border: "2px solid var(--primary-main)",
+        pointerEvents: "none",
         width: position.width,
         height: position.height,
-        zIndex: 'var(--hover-index)',
-        boxSizing: 'border-box',
+        zIndex: "var(--hover-index)",
+        boxSizing: "border-box",
       }}
     />,
     el!,
